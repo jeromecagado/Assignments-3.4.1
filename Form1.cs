@@ -2,7 +2,7 @@ namespace Assignments_3._4._1
 {
     public partial class Form1 : Form
     {
-        private List<Coffee> _coffeeList = new List<Coffee>();
+        private CoffeeRepository _repository = new CoffeeRepository();
         private BindingSource _coffeeBindingSource = new BindingSource();
 
         public Form1()
@@ -13,57 +13,7 @@ namespace Assignments_3._4._1
 
         private void Form1_Load(object sender, EventArgs e)
         {
-            // Initalize the list with 5 coffees
-            _coffeeList.Add(new Coffee
-            {
-                BevId = 1,
-                Brand = "Starbucks",
-                VolumeInOz = 20,
-                Roast = RoastType.Dark,
-                IsDecaf = false
-
-            });
-
-            _coffeeList.Add(new Coffee
-            {
-                BevId = 2,
-                Brand = "Dunkin",
-                VolumeInOz = 8,
-                Roast = RoastType.Light,
-                IsDecaf = true
-
-            });
-
-            _coffeeList.Add(new Coffee
-            {
-                BevId = 3,
-                Brand = "Seattle's Best",
-                VolumeInOz = 12,
-                Roast = RoastType.Medium,
-                IsDecaf = false
-
-            });
-
-            _coffeeList.Add(new Coffee
-            {
-                BevId = 4,
-                Brand = "Pete's",
-                VolumeInOz = 16,
-                Roast = RoastType.Medium_Dark,
-                IsDecaf = false
-
-            });
-
-            _coffeeList.Add(new Coffee
-            {
-                BevId = 5,
-                Brand = "Olympia's Coffee",
-                VolumeInOz = 20,
-                Roast = RoastType.Dark,
-                IsDecaf = false
-
-            });
-
+            
             // Bind the Roast Type to combo
             cmbRoast.DataSource = Enum.GetValues(typeof(RoastType));
 
@@ -71,7 +21,7 @@ namespace Assignments_3._4._1
             cmbVolume.DataSource = new List<double> { 8, 12, 16, 20 };
 
             // Bind list to grid.
-            _coffeeBindingSource.DataSource = _coffeeList;
+            _coffeeBindingSource.DataSource = _repository.GetAllCoffee();
             dataGridView1.DataSource = _coffeeBindingSource;
 
             // Show the grid in the following order
@@ -92,7 +42,7 @@ namespace Assignments_3._4._1
             // Create the new coffee
             Coffee coffee = new Coffee()
             {
-                BevId = _coffeeList.Count + 1,
+                BevId = _repository.GetAllCoffee().Count + 1,
                 Brand = txtBrand.Text.Trim(),
                 VolumeInOz = (double)cmbVolume.SelectedItem,
                 Roast = (RoastType)cmbRoast.SelectedItem,
@@ -100,7 +50,7 @@ namespace Assignments_3._4._1
             };
 
             // Add to list
-            _coffeeList.Add(coffee);
+            _repository.AddCoffee(coffee);
             _coffeeBindingSource.ResetBindings(false);
 
             // Clear the list
@@ -112,13 +62,13 @@ namespace Assignments_3._4._1
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (_coffeeList.Count == 0)
+            if (_repository.GetAllCoffee().Count == 0)
             {
                 MessageBox.Show("There are no coffees left to delete.");
                 return;
             }
 
-            _coffeeList.RemoveAt(_coffeeList.Count - 1);   // Deletes last coffee
+            _repository.RemoveCoffee();   // Deletes last coffee
             _coffeeBindingSource.ResetBindings(false);
         }
     }
